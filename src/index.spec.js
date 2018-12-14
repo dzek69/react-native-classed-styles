@@ -1,35 +1,46 @@
 import getClassedStyles from "./index";
 
+const defaultContainerStyle = {
+    fontSize: 10,
+};
+const defaultButtonStyle = {
+    zIndex: 111,
+};
+
 const styles = {
-    container: {
-        fontSize: 10,
-    },
-    button: {
-        zIndex: 111,
-    },
+    container: defaultContainerStyle,
+    button: defaultButtonStyle,
+};
+
+const bigContainerStyle = {
+    fontSize: 15,
+    width: 100,
+};
+
+const redContainerStyle = {
+    color: "red",
+};
+
+const greenContainerStyle = {
+    color: "green",
+};
+
+const linkLinkStyle = {
+    textTransform: "lowercase",
 };
 
 const classes = {
     big: {
-        container: {
-            fontSize: 15,
-            width: 100,
-        },
+        container: bigContainerStyle,
     },
     red: {
-        container: {
-            color: "red",
-        },
+        container: redContainerStyle,
     },
     green: {
-        container: {
-            color: "green",
-        },
+        container: greenContainerStyle,
     },
     linkOnly: {
-        link: {
-            textTransform: "lowercase",
-        },
+        link: linkLinkStyle,
     },
 };
 
@@ -42,27 +53,16 @@ describe("getClassedStyle", () => {
     it("returns base styles", () => {
         const getStyles = getClassedStyles(styles, classes);
         const style = getStyles();
-        style.must.eql({
-            container: {
-                fontSize: 10,
-            },
-            button: {
-                zIndex: 111,
-            },
-        });
+        style.must.eql(styles);
     });
 
     it("returns single classed styles", () => {
         const getStyles = getClassedStyles(styles, classes);
         const style = getStyles("green");
         style.must.eql({
-            container: {
-                fontSize: 10,
-                color: "green",
-            },
-            button: {
-                zIndex: 111,
-            },
+            container: [defaultContainerStyle, greenContainerStyle],
+            button: defaultButtonStyle,
+            link: [],
         });
     });
 
@@ -70,13 +70,9 @@ describe("getClassedStyle", () => {
         const getStyles = getClassedStyles(styles, classes);
         const style = getStyles("big");
         style.must.eql({
-            container: {
-                fontSize: 15,
-                width: 100,
-            },
-            button: {
-                zIndex: 111,
-            },
+            container: [defaultContainerStyle, bigContainerStyle],
+            button: defaultButtonStyle,
+            link: [],
         });
     });
 
@@ -84,13 +80,9 @@ describe("getClassedStyle", () => {
         const getStyles = getClassedStyles(styles, classes);
         const style = getStyles("green red");
         style.must.eql({
-            container: {
-                fontSize: 10,
-                color: "red",
-            },
-            button: {
-                zIndex: 111,
-            },
+            container: [defaultContainerStyle, greenContainerStyle, redContainerStyle],
+            button: defaultButtonStyle,
+            link: [],
         });
     });
 
@@ -98,14 +90,11 @@ describe("getClassedStyle", () => {
         const getStyles = getClassedStyles(styles, classes);
         const style = getStyles("big green red green");
         style.must.eql({
-            container: {
-                fontSize: 15,
-                width: 100,
-                color: "green",
-            },
-            button: {
-                zIndex: 111,
-            },
+            container: [
+                defaultContainerStyle, bigContainerStyle, greenContainerStyle, redContainerStyle, greenContainerStyle,
+            ],
+            button: defaultButtonStyle,
+            link: [],
         });
     });
 
@@ -113,12 +102,9 @@ describe("getClassedStyle", () => {
         const getStyles = getClassedStyles(styles, classes);
         const style = getStyles("karma");
         style.must.eql({
-            container: {
-                fontSize: 10,
-            },
-            button: {
-                zIndex: 111,
-            },
+            container: defaultContainerStyle,
+            button: defaultButtonStyle,
+            link: [],
         });
     });
 
@@ -126,9 +112,7 @@ describe("getClassedStyle", () => {
         const getStyles = getClassedStyles(styles, classes);
         const style = getStyles("linkOnly");
         style.must.eql({
-            container: {
-                fontSize: 10,
-            },
+            container: defaultContainerStyle,
             button: {
                 zIndex: 111,
             },
@@ -141,35 +125,14 @@ describe("getClassedStyle", () => {
     it("caches/memoizes result", () => {
         const getStyles = getClassedStyles(styles, classes);
         getStyles("red karma linkOnly").must.equal(getStyles("red karma linkOnly"));
+        getStyles("red karma linkOnly").container.must.equal(getStyles("red karma linkOnly").container);
 
         getStyles("red karma linkOnly").must.not.equal(getStyles("red karma linkOnly ")); // mind the gap
+        getStyles("red karma linkOnly").container.must.not.equal(getStyles("red karma linkOnly ").container);
+
         getStyles("red karma linkOnly").must.eql(getStyles("red karma linkOnly ")); // mind the gap
-    });
-
-    it("doesn't do deep merge, so transforms are overwritten", () => {
-        const deepStyles = {
-            container: {
-                transform: [{ scale: 5 }, { rotate: 100 }],
-            },
-        };
-
-        const deepClasses = {
-            light: {
-                container: {
-                    transform: [{ rotate: 69 }],
-                },
-            },
-        };
-
-        const getStyles = getClassedStyles(deepStyles, deepClasses);
-
-        getStyles("light").must.eql({
-            container: {
-                transform: [{ rotate: 69 }],
-            },
-        });
+        getStyles("red karma linkOnly").container.must.eql(getStyles("red karma linkOnly ").container);
     });
 
     // @todo tests/support for spaces inside keys
-    // @todo overwriting with nulls
 });
