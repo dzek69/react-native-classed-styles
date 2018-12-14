@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [UNRELEASED]
 (nothing yet)
 
-## [1.0.0] - 2018-12-14
+## [1.0.1] - 2018-12-14
+### Fixed
+- eslint config
+
+## [1.0.0] - (not published)
 ### Added
 - first version
 
