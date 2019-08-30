@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [UNRELEASED]
 (nothing yet)
 
+## [3.0.0] - 2019-08-30
+### Changed
+- `dist` directory transpiled to features supported by >3% browsers
+### Fixed
+- audit warnings by dev deps upgrade
+
 ## [2.0.0] - 2018-12-15
 ### Added
 - README features
